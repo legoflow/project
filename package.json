@@ -1,0 +1,23 @@
+{
+  "name": "legoflow-project",
+  "version": "0.0.0",
+  "description": "new project type",
+  "main": "index.js",
+  "scripts": {
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/legoflow/project.git"
+  },
+  "author": "lijialiang@yy.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/legoflow/project/issues"
+  },
+  "homepage": "https://github.com/legoflow/project#readme",
+  "dependencies": {
+    "fs-extra": "^5.0.0",
+    "line-reader": "^0.4.0",
+    "yamljs": "^0.3.0"
+  }
+}
