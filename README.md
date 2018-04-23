@@ -42,14 +42,14 @@ const newProject = require('legoflow-project');
 
 传入配置参数选项为:
 
-| 名称 | 类型 | 默认值 | 备注 |
-|-----|-----——|-----——|-----——|
-| name | String | null | 项目名称 |
-| type | String | null | 项目类型，可选值 `pc` / `mobile` / `vue` |
-| version | String | null | 版本号 |
-| path | String | null | 创建的绝对路径 |
-| isESNext | Boolean | true | 是否对 JS 进行 ES.Next 语法编译 |
-| isSourcePath | Boolean | false | 是否作为源路径，若为 `true`，则项目路径下直接作为项目路径，不单独创建以项目名称的文件夹 |
+名称 | 类型 | 默认值 | 备注
+-----|------- | -----|-------
+name | String | null | 项目名称
+type | String | null | 项目类型，可选值 `pc` / `mobile` / `vue`
+version | String | null | 版本号
+path | String | null | 创建的绝对路径 |
+isESNext | Boolean | true | 是否对 JS 进行 ES.Next 语法编译
+isSourcePath | Boolean | false | 是否作为源路径，若为 `true`，则项目路径下直接作为项目路径，不单独创建以项目名称的文件夹
 
 ## 许可
 

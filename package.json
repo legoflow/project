@@ -1,6 +1,6 @@
 {
   "name": "legoflow-project",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "new project type",
   "main": "index.js",
   "scripts": {
@@ -19,5 +19,10 @@
     "fs-extra": "^5.0.0",
     "line-reader": "^0.4.0",
     "yamljs": "^0.3.0"
+  },
+  "project": {
+    "Vue.js": "vue",
+    "PC": "pc",
+    "Mobile": "mobile"
   }
 }
