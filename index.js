@@ -76,6 +76,15 @@ module.exports = async ( data ) => {
     // cope type folder
     fs.copySync( projectTypePath, path.resolve( projectPath, './src' ) );
 
+    // create img folder
+    const imgFolder = path.resolve( projectPath, './src/img' );
+    const imgBase64Folder = path.resolve( projectPath, './src/img/base64' );
+    const imgSliceFolder = path.resolve( projectPath, './src/img/slice' );
+
+    fs.mkdirSync( imgFolder );
+    fs.mkdirSync( imgBase64Folder );
+    fs.mkdirSync( imgSliceFolder );
+
     // cope .gitignore
     const gitignoreFile = path.resolve( __dirname, './project/gitignore' );
 
