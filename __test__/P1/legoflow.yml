@@ -1,0 +1,15 @@
+name: [name]
+
+version: [c_version]
+
+type: [type]
+
+REM: false
+
+ES.Next: [ESNext]
+
+alias: {}
+
+global: {}
+
+externals: {}

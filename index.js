@@ -2,29 +2,48 @@
 
 const path = require('path');
 const fs = require('fs-extra');
+const config = require('legoflow-config');
 const YAML = require('yamljs');
 const formatYamlFile = require('format-yaml');
 
-const getProjectType = require('./getProjectType');
+const getDefalutProjectType = ( ) => {
+    const { project } = JSON.parse( fs.readFileSync( path.resolve( __dirname, './package.json' ), 'utf8' ) );
 
-module.exports = async ( data ) => {
+    for ( let k in project ) {
+        project[ k ] = path.resolve( __dirname, `./project/${ project[ k ] }` );
+    }
+
+    return project;
+}
+
+const getCustomProjectType = ( ) => {
+    const customProjectPath = config.get( 'customProjectPath' ) || '';
+
+    let customProject = { };
+
+    if ( customProjectPath && fs.existsSync( customProjectPath ) ) {
+        const customProjectFolder = fs.readdirSync( customProjectPath ).filter( ( n ) => fs.statSync( path.resolve( customProjectPath, n ) ).isDirectory( ) )
+
+        customProjectFolder.forEach( ( item ) => {
+            customProject[ item ] = path.resolve( customProjectPath, item );
+        } )
+    }
+
+    return customProject;
+}
+
+const getProjectType = ( ) => {
+    return Object.assign( getDefalutProjectType( ), getCustomProjectType( ) );
+}
+
+exports.getProjectType = getProjectType;
+
+const newDefaultProject = async ( data ) => {
     let { name, type, path: projectPath, version, isESNext, isSourcePath, author, c_version } = data;
 
-    const types = getProjectType( );
-
-    if ( !isSourcePath ) {
-        projectPath = path.resolve( projectPath, `./${ name }` );
-    }
-
-    if ( fs.existsSync( projectPath ) ) {
-        return '项目已存在';
-    }
+    const types = getDefalutProjectType( );
 
     const projectTypePath = types[ type ];
-
-    if ( !fs.existsSync( projectTypePath ) ) {
-        return '找不到该类型项目';
-    }
 
     fs.ensureDirSync( projectPath );
 
@@ -90,5 +109,75 @@ module.exports = async ( data ) => {
 
     fs.copySync( gitignoreFile, path.resolve( projectPath, './.gitignore' ) );
 
-    return Object.assign( data, { path: projectPath } );
-};
+    return data;
+}
+
+const newCustomProject = async ( data ) => {
+    let { name, type, path: projectPath, version, isESNext, isSourcePath, author, c_version } = data;
+
+    const types = getCustomProjectType( );
+
+    const projectTypePath = types[ type ];
+
+    const yamlConfigPath = path.resolve( projectTypePath, 'legoflow.yml' );
+    const packageJsonPath = path.resolve( projectTypePath, 'package.json' );
+
+    if ( !fs.existsSync( yamlConfigPath ) ) {
+        return '该项目类型缺少配置模板文件';
+    }
+
+    if ( !fs.existsSync( packageJsonPath ) ) {
+        return '该项目类型缺少模板 package.json';
+    }
+
+    const replaceInfo = ( str ) => {
+        return str.replace( /\[name\]/g, name )
+                    .replace( /\[version\]/g, version )
+                    .replace( /\[author\]/g, author )
+                    .replace( /\[c_version\]/g, c_version )
+                    .replace( /\[type\]/g, type )
+                    .replace( /\[ESNext\]/g, isESNext )
+    }
+
+    const yamlConfig = replaceInfo( fs.readFileSync( yamlConfigPath, 'utf8' ) );
+    const packageJson = replaceInfo( fs.readFileSync( packageJsonPath, 'utf8' ) );
+
+    fs.ensureDirSync( projectPath );
+
+    fs.writeFileSync( path.resolve( projectPath, 'legoflow.yml' ), yamlConfig );
+    fs.writeFileSync( path.resolve( projectPath, 'package.json' ), packageJson );
+
+    // copy src folder
+    const srcPath = path.resolve( projectTypePath, 'src' );
+
+    fs.existsSync( srcPath ) && fs.copySync( srcPath, path.resolve( projectPath, 'src' ) );
+
+    // copy shell folder
+    const shellPath = path.resolve( projectTypePath, 'shell' );
+
+    fs.existsSync( shellPath ) && fs.copySync( srcPath, path.resolve( shellPath, 'shell' ) );
+
+    return data;
+}
+
+exports.new = async ( data ) => {
+    let { name, path: projectPath, isSourcePath, type } = data;
+
+    if ( !isSourcePath ) {
+        data.path = projectPath = path.resolve( projectPath, `./${ name }` );
+    }
+
+    if ( fs.existsSync( projectPath ) ) {
+        return '项目已存在';
+    }
+
+    if ( getCustomProjectType( )[ type ] ) {
+        return await newCustomProject( data );
+    }
+    else if ( getDefalutProjectType( )[ type ] ) {
+        return await newDefaultProject( data );
+    }
+    else {
+        return '找不到该类型项目';
+    }
+}

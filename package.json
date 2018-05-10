@@ -1,7 +1,7 @@
 {
   "name": "legoflow-project",
-  "version": "0.0.4",
-  "description": "new project type",
+  "version": "0.0.5",
+  "description": "legoflow project",
   "main": "index.js",
   "scripts": {},
   "repository": {
@@ -17,6 +17,7 @@
   "dependencies": {
     "format-yaml": "^0.0.1",
     "fs-extra": "~5.0.0",
+    "legoflow-config": "0.0.3",
     "yamljs": "^0.3.0"
   },
   "project": {
