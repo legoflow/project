@@ -1,5 +1,6 @@
 'use strict';
 
+const glob = require('glob');
 const path = require('path');
 const fs = require('fs-extra');
 const config = require('legoflow-config');
@@ -167,8 +168,12 @@ exports.new = async ( data ) => {
         data.path = projectPath = path.resolve( projectPath, `./${ name }` );
     }
 
-    if ( fs.existsSync( projectPath ) ) {
+    if ( !isSourcePath && fs.existsSync( projectPath ) ) {
         return '项目已存在';
+    }
+
+    if ( fs.existsSync( data.path ) && glob.sync( `${ data.path }/**/*` ).length > 0 ) {
+        return '路径存在其他文件';
     }
 
     if ( getCustomProjectType( )[ type ] ) {
