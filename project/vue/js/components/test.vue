@@ -12,7 +12,7 @@ h1 {
 
 <script>
 export default {
-    data () {
+    data ( ) {
         return {
             msg: 'foo',
         }

@@ -65,7 +65,6 @@ const newDefaultProject = async ( data ) => {
         REM: false,
         'ES.Next': isESNext || true,
         alias: { },
-        global: { },
     };
 
     switch ( type ) {
@@ -82,6 +81,12 @@ const newDefaultProject = async ( data ) => {
         }
 		case 'Vue.js': {
             legoflowJSON.externals = { vue: 'Vue' };
+            legoflowJSON.alias = {
+                'var.scss': './src/scss/_var.scss',
+                '@': './src/js',
+            }
+            legoflowJSON[ 'workflow.dev' ] = { };
+            legoflowJSON[ 'workflow.dev' ][ 'hot.reload' ] = true;
 		    break;
         }
     }
@@ -90,8 +95,12 @@ const newDefaultProject = async ( data ) => {
 
     fs.writeFileSync( configFile, YAML.stringify( legoflowJSON, 4 ) );
 
+    let formatYamlString = await formatYamlFile( configFile );
+
+    formatYamlString = `# 参数说明: https://legoflow.com/wiki/config.html\n\n${ formatYamlString }`;
+
     // format YAML file
-    fs.writeFileSync( configFile, await formatYamlFile( configFile ) );
+    fs.writeFileSync( configFile, formatYamlString );
 
     // cope type folder
     fs.copySync( projectTypePath, path.resolve( projectPath, './src' ) );

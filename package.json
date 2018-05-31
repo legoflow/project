@@ -1,6 +1,6 @@
 {
   "name": "legoflow-project",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "legoflow project",
   "main": "index.js",
   "scripts": {},

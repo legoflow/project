@@ -1,20 +1,20 @@
+'use strict';
+
 const routes = [
     {
         path: '/',
-        component: r => require.ensure([], () => r(require('./components/test')), 'test'),
+        component: ( ) => import( /* webpackChunkName: "test" */ './components/test' ),
     },
 ];
 
-const router = new VueRouter({
+const router = new VueRouter( {
     routes,
-})
+} );
 
-new Vue({
+new Vue( {
     el: 'app',
     router,
     render ( h ) {
-        return (
-            <router-view></router-view>
-        )
+        return ( <router-view></router-view> );
     }
-})
+} )
