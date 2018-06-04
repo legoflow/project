@@ -1,9 +1,13 @@
+package-lock.json
+./src/sass/_img.scss
+node_modules
+**/.DS_Store
 **.zip
 **/dist
-**/src/sass/_img.scss
 **/legolib
 **/lego-lib
 **/img_old
 **.vscode
 stats.json
 src/css
+.cache

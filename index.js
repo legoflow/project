@@ -5,6 +5,7 @@ const path = require('path');
 const fs = require('fs-extra');
 const config = require('legoflow-config');
 const YAML = require('yamljs');
+const shell = require('shelljs');
 const formatYamlFile = require('format-yaml');
 
 const getDefalutProjectType = ( ) => {
@@ -40,7 +41,7 @@ const getProjectType = ( ) => {
 exports.getProjectType = getProjectType;
 
 const newDefaultProject = async ( data ) => {
-    let { name, type, path: projectPath, version, isESNext, isSourcePath, author, c_version } = data;
+    let { name, type, path: projectPath, version, isESNext, isSourcePath, author, c_version, description = '' } = data;
 
     const types = getDefalutProjectType( );
 
@@ -53,9 +54,8 @@ const newDefaultProject = async ( data ) => {
         name,
         version,
         author,
+        description,
     };
-
-    fs.writeFileSync( path.resolve( projectPath, './package.json' ), JSON.stringify( packageJSON, null, 4 ) );
 
     // legoflow.json
     let legoflowJSON = {
@@ -66,6 +66,8 @@ const newDefaultProject = async ( data ) => {
         'ES.Next': isESNext || true,
         alias: { },
     };
+
+    let isNeedNpminstall = false;
 
     switch ( type ) {
 		case 'Mobile': {
@@ -89,11 +91,35 @@ const newDefaultProject = async ( data ) => {
             legoflowJSON[ 'workflow.dev' ][ 'hot.reload' ] = true;
 		    break;
         }
+        case 'Vue.ts': {
+            legoflowJSON.includeModules = [ './node_modules' ];
+            legoflowJSON.alias = {
+                'var.scss': './src/scss/_var.scss',
+                '@': './src/js',
+            }
+            legoflowJSON[ 'workflow.dev' ] = { };
+            legoflowJSON[ 'workflow.dev' ][ 'hot.reload' ] = true;
+
+            packageJSON.dependencies = {
+                "axios": "^0.18.0",
+                "vue": "^2.5.16",
+                "vue-class-component": "^6.2.0",
+                "vue-property-decorator": "^6.1.0",
+                "vue-router": "^3.0.1",
+                "vuex": "^3.0.1"
+            }
+
+            isNeedNpminstall = true;
+		    break;
+        }
     }
+
+    // package.json
+    fs.writeFileSync( path.resolve( projectPath, './package.json' ), JSON.stringify( packageJSON, null, 2 ) );
 
     const configFile = path.resolve( projectPath, './legoflow.yml' );
 
-    fs.writeFileSync( configFile, YAML.stringify( legoflowJSON, 4 ) );
+    fs.writeFileSync( configFile, YAML.stringify( legoflowJSON, 2 ) );
 
     let formatYamlString = await formatYamlFile( configFile );
 
@@ -104,6 +130,9 @@ const newDefaultProject = async ( data ) => {
 
     // cope type folder
     fs.copySync( projectTypePath, path.resolve( projectPath, './src' ) );
+
+    // README
+    fs.writeFileSync( path.resolve( projectPath, './README.md' ), `# ${ name }`, 'utf8' );
 
     // create img folder
     const imgFolder = path.resolve( projectPath, './src/img' );
@@ -118,6 +147,12 @@ const newDefaultProject = async ( data ) => {
     const gitignoreFile = path.resolve( __dirname, './project/gitignore' );
 
     fs.copySync( gitignoreFile, path.resolve( projectPath, './.gitignore' ) );
+
+    if ( isNeedNpminstall && shell.cd( projectPath ) ) {
+        console.log( 'installing local node_modules' );
+
+        shell.exec( `npm i` );
+    }
 
     return data;
 }
