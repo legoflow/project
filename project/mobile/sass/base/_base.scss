@@ -4,16 +4,16 @@
  */
 
 // 文本配置
-$b-font-size       : 14px !default;
-$b-font-family     : "San Francisco", "Helvetica Neue", Helvetica, sans-serif !default;
-$b-font-weight     : 300 !default;
-$b-line-height     : 1.5 !default;
-$b-link-decoration : underline !default;
+$b-font-size: 14px !default;
+$b-font-family: "San Francisco", "Helvetica Neue", Helvetica, sans-serif !default;
+$b-font-weight: 300 !default;
+$b-line-height: 1.5 !default;
+$b-link-decoration: underline !default;
 
 // 颜色配置
-$c-text       : #333 !default;
-$c-background : #fff !default;
-$c-link       : #333 #fa0 !default;
+$c-text: #333 !default;
+$c-background: #fff !default;
+$c-link: #333 #fa0 !default;
 
 // 基础模块
 @import "normalize";

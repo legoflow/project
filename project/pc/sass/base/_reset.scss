@@ -4,40 +4,89 @@
 
 /* 去除现代浏览器图片底部的空隙 */
 img {
-    vertical-align: top;
+  vertical-align: top;
 }
+
 em {
-    font-style: normal;
+  font-style: normal;
 }
-ol, ul, menu {
-    list-style: none outside none;
+
+ol,
+ul,
+menu {
+  list-style: none outside none;
 }
-fieldset, iframe {
-    border: 0 none;
+
+fieldset,
+iframe {
+  border: 0 none;
 }
-dl, dt, dd, ul, ol, li,
-h1, h2, h3, h4, h5, h6,
-pre, code, blockquote,
-form, fieldset, legend, input, button, textarea,
-th, td, hr, p,
-article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
-    margin: 0;
-    padding: 0;
+
+dl,
+dt,
+dd,
+ul,
+ol,
+li,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+pre,
+code,
+blockquote,
+form,
+fieldset,
+legend,
+input,
+button,
+textarea,
+th,
+td,
+hr,
+p,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+  margin: 0;
+  padding: 0;
 }
 
 /* IE6 7 8(q) bug 显示为行内表现 */
 iframe {
-    display: block;
+  display: block;
 }
 
 /* IE bug fixed: th 不继承 text-align */
 th {
-    text-align: inherit;
+  text-align: inherit;
 }
 
 /* 修正表单元素不继承父级字体族的问题 */
-input, button, select, textarea {
-    font-family: $b-font-family;
+input,
+button,
+select,
+textarea {
+  font-family: $b-font-family;
 }
 
 /**
@@ -45,7 +94,7 @@ input, button, select, textarea {
  * 禁止水平拖动，防止破坏布局
  */
 textarea {
-    @include resizable(vertical);
+  @include resizable(vertical);
 }
 
 /**
@@ -59,31 +108,30 @@ textarea::-moz-placeholder {
 
 /* 一致的 del 样式 */
 del {
-    text-decoration: line-through;
+  text-decoration: line-through;
 }
 
 abbr {
-    cursor: help;
+  cursor: help;
 }
 
 /* pre允许溢出滚动 */
 pre {
-    overflow: auto;
+  overflow: auto;
 }
 
 /* 以下为排版样式 */
-
 hr {
-    height: 10px;
-    margin-bottom: .8em;
-    border: 0;
-    border-bottom: 1px solid #cfcfcf;
+  height: 10px;
+  margin-bottom: .8em;
+  border: 0;
+  border-bottom: 1px solid #cfcfcf;
 }
 
 blockquote {
-    position: relative;
-    padding: 0 15px;
-    margin: 15px 0;
-    border-left: 4px solid #ddd;
-    color: #999;
+  position: relative;
+  padding: 0 15px;
+  margin: 15px 0;
+  border-left: 4px solid #ddd;
+  color: #999;
 }

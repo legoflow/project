@@ -64,6 +64,7 @@ const newDefaultProject = async ( data ) => {
         type,
         REM: false,
         'ES.Next': isESNext || true,
+        ESLint: false,
         alias: { },
     };
 
@@ -84,7 +85,7 @@ const newDefaultProject = async ( data ) => {
 		case 'Vue.js': {
             legoflowJSON.externals = { vue: 'Vue' };
             legoflowJSON.alias = {
-                'var.scss': './src/scss/_var.scss',
+                'var.scss': './src/sass/_var.scss',
                 '@': './src/js',
             }
             legoflowJSON[ 'workflow.dev' ] = { };
@@ -94,7 +95,7 @@ const newDefaultProject = async ( data ) => {
         case 'Vue.ts': {
             legoflowJSON.includeModules = [ './node_modules' ];
             legoflowJSON.alias = {
-                'var.scss': './src/scss/_var.scss',
+                'var.scss': './src/sass/_var.scss',
                 '@': './src/js',
             }
             legoflowJSON[ 'workflow.dev' ] = { };
@@ -114,12 +115,16 @@ const newDefaultProject = async ( data ) => {
         }
     }
 
+    if ( author.indexOf( 'UED.' ) === 0 ) {
+        legoflowJSON.ESLint = true;
+    }
+
     // package.json
     fs.writeFileSync( path.resolve( projectPath, './package.json' ), JSON.stringify( packageJSON, null, 2 ) );
 
     const configFile = path.resolve( projectPath, './legoflow.yml' );
 
-    fs.writeFileSync( configFile, YAML.stringify( legoflowJSON, 2 ) );
+    fs.writeFileSync( configFile, YAML.stringify( legoflowJSON, 2, 2 ) );
 
     let formatYamlString = await formatYamlFile( configFile );
 
@@ -143,10 +148,12 @@ const newDefaultProject = async ( data ) => {
     fs.mkdirSync( imgBase64Folder );
     fs.mkdirSync( imgSliceFolder );
 
-    // cope .gitignore
+    // copy .gitignore .editorconfig
     const gitignoreFile = path.resolve( __dirname, './project/gitignore' );
+    const editorconfigFile = path.resolve( __dirname, './project/editorconfig' );
 
     fs.copySync( gitignoreFile, path.resolve( projectPath, './.gitignore' ) );
+    fs.copySync( editorconfigFile, path.resolve( projectPath, './.editorconfig' ) );
 
     if ( isNeedNpminstall && shell.cd( projectPath ) ) {
         console.log( 'installing local node_modules' );
