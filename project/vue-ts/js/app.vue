@@ -12,7 +12,7 @@ import Home from '@/components/home'
 
 @Component({
   components: {
-    Home,
+    Home
   }
 })
 export default class App extends Vue {}

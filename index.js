@@ -41,7 +41,7 @@ const getProjectType = ( ) => {
 exports.getProjectType = getProjectType;
 
 const newDefaultProject = async ( data ) => {
-    let { name, type, path: projectPath, version, isESNext, isSourcePath, author, c_version, description = '' } = data;
+    let { name, type, path: projectPath, version, isESNext, isSourcePath, author, c_version, description = '', isESLint } = data;
 
     const types = getDefalutProjectType( );
 
@@ -101,6 +101,8 @@ const newDefaultProject = async ( data ) => {
             legoflowJSON[ 'workflow.dev' ] = { };
             legoflowJSON[ 'workflow.dev' ][ 'hot.reload' ] = true;
 
+            legoflowJSON.ESLint = true;
+
             packageJSON.dependencies = {
                 "axios": "^0.18.0",
                 "vue": "^2.5.16",
@@ -115,8 +117,8 @@ const newDefaultProject = async ( data ) => {
         }
     }
 
-    if ( author.indexOf( 'UED.' ) === 0 ) {
-        legoflowJSON.ESLint = true;
+    if ( typeof isESLint !== 'undefined' ) {
+        legoflowJSON.ESLint = isESLint;
     }
 
     // package.json
