@@ -3,7 +3,7 @@
 const glob = require('glob');
 const path = require('path');
 const fs = require('fs-extra');
-const config = require('legoflow-config');
+const legoflowConfig = require('legoflow-config');
 const YAML = require('yamljs');
 const shell = require('shelljs');
 const formatYamlFile = require('format-yaml');
@@ -19,7 +19,7 @@ const getDefalutProjectType = ( ) => {
 }
 
 const getCustomProjectType = ( ) => {
-    const customProjectPath = config.get( 'customProjectPath' ) || '';
+    const customProjectPath = legoflowConfig.get( 'customProjectPath' ) || '';
 
     let customProject = { };
 
