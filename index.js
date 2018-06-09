@@ -69,6 +69,7 @@ const newDefaultProject = async ( data ) => {
     };
 
     let isNeedNpminstall = false;
+    let isNeedCreateDefalutFolder = true;
 
     switch ( type ) {
 		case 'Mobile': {
@@ -93,15 +94,27 @@ const newDefaultProject = async ( data ) => {
 		    break;
         }
         case 'Vue.ts': {
+            isNeedCreateDefalutFolder = false;
+            isNeedNpminstall = true;
+
             legoflowJSON.includeModules = [ './node_modules' ];
+
             legoflowJSON.alias = {
                 'var.scss': './src/sass/_var.scss',
-                '@': './src/js',
+                '@': './src',
             }
+
+            legoflowJSON.ESLint = true;
+
+            legoflowJSON.mode = 'webpack';
+
+            legoflowJSON.entry = [ './src/main.ts' ];
+
             legoflowJSON[ 'workflow.dev' ] = { };
             legoflowJSON[ 'workflow.dev' ][ 'hot.reload' ] = true;
 
-            legoflowJSON.ESLint = true;
+            legoflowJSON[ 'workflow.build' ] = { };
+            legoflowJSON[ 'workflow.build' ][ 'bundle.limitResourcesSize' ] = 5;
 
             packageJSON.dependencies = {
                 "axios": "^0.18.0",
@@ -112,7 +125,6 @@ const newDefaultProject = async ( data ) => {
                 "vuex": "^3.0.1"
             }
 
-            isNeedNpminstall = true;
 		    break;
         }
     }
@@ -146,9 +158,11 @@ const newDefaultProject = async ( data ) => {
     const imgBase64Folder = path.resolve( projectPath, './src/img/base64' );
     const imgSliceFolder = path.resolve( projectPath, './src/img/slice' );
 
-    fs.mkdirSync( imgFolder );
-    fs.mkdirSync( imgBase64Folder );
-    fs.mkdirSync( imgSliceFolder );
+    if ( isNeedCreateDefalutFolder ) {
+        fs.mkdirSync( imgFolder );
+        fs.mkdirSync( imgBase64Folder );
+        fs.mkdirSync( imgSliceFolder );
+    }
 
     // copy .gitignore .editorconfig
     const gitignoreFile = path.resolve( __dirname, './project/gitignore' );

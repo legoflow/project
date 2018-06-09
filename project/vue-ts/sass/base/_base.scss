@@ -1,7 +1,7 @@
 // 引入重置样式
 @import "normalize";
-
 /* 设置基本html,body样式 */
+
 html,
 body {
   margin: 0 auto;
@@ -9,18 +9,21 @@ body {
 }
 
 /* 清除默认按钮表现形式 */
+
 button {
   -webkit-appearance: none;
   appearance: none;
 }
 
 /* 设置表格默认样式 */
+
 table {
   border-collapse: collapse;
   border-spacing: 0;
 }
 
 /* 文本域禁止拖拉放大 */
+
 textarea {
   resize: none;
 }
