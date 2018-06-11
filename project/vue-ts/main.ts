@@ -1,14 +1,14 @@
 import './sass/main'
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import App from './app'
+import App from './app.vue'
 
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
-    component: () => import(/* webpackChunkName: "home" */ './components/home')
+    component: () => import(/* webpackChunkName: "home" */ './components/home.vue')
   }
 ]
 

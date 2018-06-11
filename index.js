@@ -70,6 +70,7 @@ const newDefaultProject = async ( data ) => {
 
     let isNeedNpminstall = false;
     let isNeedCreateDefalutFolder = true;
+    let isTsConfigJson = false;
 
     switch ( type ) {
 		case 'Mobile': {
@@ -96,6 +97,7 @@ const newDefaultProject = async ( data ) => {
         case 'Vue.ts': {
             isNeedCreateDefalutFolder = false;
             isNeedNpminstall = true;
+            isTsConfigJson = true;
 
             legoflowJSON.includeModules = [ './node_modules' ];
 
@@ -114,6 +116,7 @@ const newDefaultProject = async ( data ) => {
             legoflowJSON[ 'workflow.dev' ][ 'hot.reload' ] = true;
 
             legoflowJSON[ 'workflow.build' ] = { };
+            legoflowJSON[ 'workflow.build' ][ 'cache' ] = 'hash';
             legoflowJSON[ 'workflow.build' ][ 'bundle.limitResourcesSize' ] = 5;
 
             packageJSON.dependencies = {
@@ -167,9 +170,12 @@ const newDefaultProject = async ( data ) => {
     // copy .gitignore .editorconfig
     const gitignoreFile = path.resolve( __dirname, './project/gitignore' );
     const editorconfigFile = path.resolve( __dirname, './project/editorconfig' );
+    const tsconfigJsonFile = path.resolve( __dirname, './project/tsconfig.json' );
 
     fs.copySync( gitignoreFile, path.resolve( projectPath, './.gitignore' ) );
     fs.copySync( editorconfigFile, path.resolve( projectPath, './.editorconfig' ) );
+
+    isTsConfigJson && fs.copySync( tsconfigJsonFile, path.resolve( projectPath, 'tsconfig.json' ) );
 
     if ( isNeedNpminstall && shell.cd( projectPath ) ) {
         console.log( 'installing local node_modules' );
