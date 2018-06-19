@@ -41,7 +41,7 @@ const getProjectType = ( ) => {
 exports.getProjectType = getProjectType;
 
 const newDefaultProject = async ( data ) => {
-    let { name, type, path: projectPath, version, isESNext, isSourcePath, author, c_version, description = '', isESLint } = data;
+    let { name, type, path: projectPath, version, isESNext, isSourcePath, author, c_version, description = '', isESLint, from } = data;
 
     const types = getDefalutProjectType( );
 
@@ -72,6 +72,38 @@ const newDefaultProject = async ( data ) => {
     let isNeedCreateDefalutFolder = true;
     let isTsConfigJson = false;
 
+    if ( type.indexOf( 'Vue' ) == 0 ) {
+        isNeedCreateDefalutFolder = false;
+        isNeedNpminstall = from !=='app';
+
+        legoflowJSON.ESLint = false;
+
+        legoflowJSON.mode = 'webpack';
+
+        legoflowJSON.includeModules = [ './node_modules' ];
+
+        legoflowJSON.alias = {
+            '@': './src',
+            'var.scss': './src/style/var.scss',
+        }
+
+        legoflowJSON[ 'workflow.dev' ] = { };
+        legoflowJSON[ 'workflow.dev' ][ 'hot.reload' ] = true;
+
+        legoflowJSON[ 'workflow.build' ] = { };
+        legoflowJSON[ 'workflow.build' ][ 'cache' ] = 'hash';
+        legoflowJSON[ 'workflow.build' ][ 'bundle.limitResourcesSize' ] = 5;
+
+        packageJSON.dependencies = {
+            "axios": "^0.18.0",
+            "vue": "^2.5.16",
+            "vue-class-component": "^6.2.0",
+            "vue-property-decorator": "^6.1.0",
+            "vue-router": "^3.0.1",
+            "vuex": "^3.0.1"
+        }
+    }
+
     switch ( type ) {
 		case 'Mobile': {
             legoflowJSON.REM = true;
@@ -85,49 +117,16 @@ const newDefaultProject = async ( data ) => {
 			break;
         }
 		case 'Vue.js': {
-            legoflowJSON.externals = { vue: 'Vue' };
-            legoflowJSON.alias = {
-                'var.scss': './src/sass/_var.scss',
-                '@': './src/js',
-            }
-            legoflowJSON[ 'workflow.dev' ] = { };
-            legoflowJSON[ 'workflow.dev' ][ 'hot.reload' ] = true;
+            legoflowJSON.entry = [ './src/main.js' ];
+
 		    break;
         }
         case 'Vue.ts': {
-            isNeedCreateDefalutFolder = false;
-            isNeedNpminstall = true;
             isTsConfigJson = true;
-
-            legoflowJSON.includeModules = [ './node_modules' ];
-
-            legoflowJSON.alias = {
-                'var.scss': './src/sass/_var.scss',
-                '@': './src',
-            }
 
             legoflowJSON.ESLint = true;
 
-            legoflowJSON.mode = 'webpack';
-
             legoflowJSON.entry = [ './src/main.ts' ];
-
-            legoflowJSON[ 'workflow.dev' ] = { };
-            legoflowJSON[ 'workflow.dev' ][ 'hot.reload' ] = true;
-
-            legoflowJSON[ 'workflow.build' ] = { };
-            legoflowJSON[ 'workflow.build' ][ 'cache' ] = 'hash';
-            legoflowJSON[ 'workflow.build' ][ 'bundle.limitResourcesSize' ] = 5;
-
-            packageJSON.dependencies = {
-                "axios": "^0.18.0",
-                "vue": "^2.5.16",
-                "vue-class-component": "^6.2.0",
-                "vue-property-decorator": "^6.1.0",
-                "vue-router": "^3.0.1",
-                "vuex": "^3.0.1"
-            }
-
 		    break;
         }
     }

@@ -1,14 +1,15 @@
 import '@/style/main'
-import Vue from 'vue'
+import Vue from 'vue/dist/vue'
 import VueRouter from 'vue-router'
-import App from './app.vue'
+import Vuex from 'vuex'
 
 Vue.use(VueRouter)
+Vue.use(Vuex)
 
 const routes = [
   {
     path: '/',
-    component: () => import(/* webpackChunkName: "home" */ './components/home.vue')
+    component: () => import(/* webpackChunkName: "home" */ './components/home')
   }
 ]
 
@@ -20,5 +21,7 @@ const router = new VueRouter({
 new Vue({
   el: 'app',
   router,
-  render: h => h(App)
+  render (h) {
+    return (<router-view></router-view>)
+  }
 })
