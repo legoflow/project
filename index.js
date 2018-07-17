@@ -263,6 +263,12 @@ const newCustomProject = async ( data ) => {
 
     fs.existsSync( shellPath ) && fs.copySync( srcPath, path.resolve( shellPath, 'shell' ) );
 
+    const README = path.resolve( projectPath, 'README.md' );
+
+    if ( fs.existsSync( README ) ) {
+        fs.writeFileSync( README, replaceInfo( data, fs.readFileSync( README, 'utf8' ) ) );
+    }
+
     return data;
 }
 
@@ -308,7 +314,22 @@ const newNpmProject = async ( data ) => {
     const otherFiles = await globby([ `${ templatePath }/**/*`, `!${ templatePath }/package.json`, `!${ templatePath }/legoflow.yml` ] );
 
     for ( let f of otherFiles ) {
-        fs.copySync( f, path.resolve( projectPath, path.relative( templatePath, f ) ) );
+        let distPath = path.resolve( projectPath, path.relative( templatePath, f ) );
+
+        let basename = path.basename( f );
+
+        if ( basename.indexOf('~~') === 0 ) {
+            distPath = distPath.replace( basename, `.${ basename.substring( 2 ) }` )
+        }
+
+        fs.copySync( f, distPath );
+    }
+
+    // 重写 README
+    const README = path.resolve( projectPath, 'README.md' );
+
+    if ( fs.existsSync( README ) ) {
+        fs.writeFileSync( README, replaceInfo( data, fs.readFileSync( README, 'utf8' ) ) );
     }
 
     console.log( '➜ copy other files success' );
