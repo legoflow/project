@@ -136,13 +136,11 @@ const newDefaultProject = async ( data ) => {
         packageJSON.dependencies = {
             "axios": "^0.18.0",
             "vue": "^2.5.16",
-            "vue-class-component": "^6.2.0",
-            "vue-property-decorator": "^6.1.0",
             "vue-router": "^3.0.1",
             "vuex": "^3.0.1"
         }
 
-        data.newProjectSuccessMessage = `➜ You can ${ chalk.blue.bold( `**cd ${ name }**` ) } and run ${ chalk.blue.bold( '**lf dev**' ) } to start dev.workflow`;
+        data.newProjectSuccessMessage = `➜ You can${ !isSourcePath ? chalk.blue.bold( ` **cd ${ name }** and` ) : '' } run ${ chalk.blue.bold( '**lf dev**' ) } to start workflow.dev`;
     }
 
     switch ( type ) {
@@ -168,6 +166,14 @@ const newDefaultProject = async ( data ) => {
             legoflowJSON.ESLint = true;
 
             legoflowJSON.entry = [ './src/main.ts' ];
+
+            const vueTsDependencies = {
+                "vue-class-component": "^6.2.0",
+                "vue-property-decorator": "^6.1.0",
+            }
+
+            packageJSON.dependencies = Object.assign( packageJSON.dependencies, vueTsDependencies );
+
 		    break;
         }
     }
@@ -340,7 +346,7 @@ const newNpmProject = async ( data ) => {
 
     console.log( '➜ install dependencies success' );
 
-    data.newProjectSuccessMessage = `➜ You can ${ chalk.blue.bold( `**cd ${ name }**` ) } and run ${ chalk.blue.bold( '**lf dev**' ) } to start dev.workflow`;
+    data.newProjectSuccessMessage = `➜ You can${ !isSourcePath ? chalk.blue.bold( ` **cd ${ name }** and` ) : '' } run ${ chalk.blue.bold( '**lf dev**' ) } to start workflow.dev`;
 
     return data;
 }
