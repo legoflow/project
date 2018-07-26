@@ -140,7 +140,7 @@ const newDefaultProject = async ( data ) => {
             "vuex": "^3.0.1"
         }
 
-        data.newProjectSuccessMessage = `➜ You can${ !isSourcePath ? chalk.blue.bold( ` **cd ${ name }** and` ) : '' } run ${ chalk.blue.bold( '**lf dev**' ) } to start workflow.dev`;
+        data.newProjectSuccessMessage = `➜ You can${ !isSourcePath ? `${ chalk.blue.bold( ` **cd ${ name }**` ) } and` : '' } run ${ chalk.blue.bold( '**lf dev**' ) } to start workflow.dev`;
     }
 
     switch ( type ) {
@@ -346,7 +346,7 @@ const newNpmProject = async ( data ) => {
 
     console.log( '➜ install dependencies success' );
 
-    data.newProjectSuccessMessage = `➜ You can${ !isSourcePath ? chalk.blue.bold( ` **cd ${ name }** and` ) : '' } run ${ chalk.blue.bold( '**lf dev**' ) } to start workflow.dev`;
+    data.newProjectSuccessMessage = `➜ You can${ !isSourcePath ? `${ chalk.blue.bold( ` **cd ${ name }**` ) } and` : '' } run ${ chalk.blue.bold( '**lf dev**' ) } to start workflow.dev`;
 
     return data;
 }
