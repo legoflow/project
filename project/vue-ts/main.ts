@@ -1,9 +1,19 @@
 import '@/style/main'
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import Vuex from 'vuex'
 import App from './app.vue'
 
+interface WindowInterface extends Window {
+  Promise: any
+}
+
+if (!(window as WindowInterface).Promise) {
+  (window as WindowInterface).Promise = Promise
+}
+
 Vue.use(VueRouter)
+Vue.use(Vuex)
 
 const routes = [
   {
