@@ -3,6 +3,8 @@ import Vue from 'vue/dist/vue'
 import VueRouter from 'vue-router'
 import Vuex from 'vuex'
 
+!window.Promise && (window.Promise = Promise)
+
 Vue.use(VueRouter)
 Vue.use(Vuex)
 

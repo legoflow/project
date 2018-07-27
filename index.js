@@ -117,14 +117,21 @@ const newDefaultProject = async ( data ) => {
 
         legoflowJSON.ESLint = false;
 
-        legoflowJSON.mode = 'webpack';
-
         legoflowJSON.includeModules = [ './node_modules' ];
 
         legoflowJSON.alias = {
-            '@': './src',
-            'var.scss': './src/style/var.scss',
+            '@': './src'
         }
+
+        legoflowJSON.mode = 'webpack';
+
+        legoflowJSON.webpack = {
+            VueChunkStyle: false,
+        }
+
+        legoflowJSON.webpack[ 'sass.globalResources' ] = [
+            './src/style/var.scss',
+        ]
 
         legoflowJSON[ 'workflow.dev' ] = { };
         legoflowJSON[ 'workflow.dev' ][ 'hot.reload' ] = true;

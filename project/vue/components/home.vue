@@ -24,6 +24,7 @@ h1 {
   margin-top: 20px;
   width: 100%;
   text-align: center;
+  color: $h1Color;
 }
 </style>
 
