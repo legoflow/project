@@ -94,6 +94,13 @@ const newDefaultProject = async ( data ) => {
         version,
         author,
         description,
+        license: 'UNLICENSED',
+        scripts: {
+            'dev': 'lf dev',
+            'build': 'lf build',
+            'eslint': "lf:eslint --ext .ts,.js,.vue ./src/*",
+            'eslint:fix': "lf:eslint --fix --ext .ts,.js,.vue ./src/*",
+        },
     };
 
     // legoflow.json
@@ -110,6 +117,8 @@ const newDefaultProject = async ( data ) => {
     let isNeedNpminstall = false;
     let isNeedCreateDefalutFolder = true;
     let isTsConfigJson = false;
+    let isJsEslint = false;
+    let isTsEslint = false;
 
     if ( type.indexOf( 'Vue' ) == 0 ) {
         isNeedCreateDefalutFolder = false;
@@ -162,14 +171,15 @@ const newDefaultProject = async ( data ) => {
 			break;
         }
 		case 'Vue.js': {
+            isJsEslint = true;
+
             legoflowJSON.entry = [ './src/main.js' ];
 
 		    break;
         }
         case 'Vue.ts': {
             isTsConfigJson = true;
-
-            legoflowJSON.ESLint = true;
+            isTsEslint = true;
 
             legoflowJSON.entry = [ './src/main.ts' ];
 
@@ -223,11 +233,15 @@ const newDefaultProject = async ( data ) => {
     const gitignoreFile = path.resolve( __dirname, './project/gitignore' );
     const editorconfigFile = path.resolve( __dirname, './project/editorconfig' );
     const tsconfigJsonFile = path.resolve( __dirname, './project/tsconfig.json' );
+    const jsEslintFile = path.resolve( __dirname, './project/js_eslint.js' );
+    const tsEslintFile = path.resolve( __dirname, './project/ts_eslint.js' );
 
     fs.copySync( gitignoreFile, path.resolve( projectPath, './.gitignore' ) );
     fs.copySync( editorconfigFile, path.resolve( projectPath, './.editorconfig' ) );
 
     isTsConfigJson && fs.copySync( tsconfigJsonFile, path.resolve( projectPath, 'tsconfig.json' ) );
+    isJsEslint && fs.copySync( jsEslintFile, path.resolve( projectPath, '.eslintrc.js' ) );
+    isTsEslint && fs.copySync( tsEslintFile, path.resolve( projectPath, '.eslintrc.js' ) );
 
     if ( isNeedNpminstall && shell.cd( projectPath ) ) {
         console.log( 'installing local node_modules' );
