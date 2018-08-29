@@ -159,13 +159,13 @@ const newDefaultProject = async (data) => {
   switch (type) {
     case 'Mobile': {
       legoflowJSON.REM = true
-      legoflowJSON.alias = { $: './src/assets/zepto.min.js', zepto: './src/assets/zepto.min.js' }
-      legoflowJSON.global = { $: 'zepto', zepto: 'zepto' }
+      legoflowJSON.alias = { }
+      legoflowJSON.global = { }
       break
     }
     case 'PC': {
-      legoflowJSON.alias = { $: './src/assets/jquery.min.js', jquery: './src/assets/jquery.min.js', jQuery: './src/assets/jquery.min.js' }
-      legoflowJSON.global = { $: 'jquery', jquery: 'jquery', jQuery: 'jquery' }
+      legoflowJSON.alias = { }
+      legoflowJSON.global = { }
       break
     }
     case 'Vue.js': {
