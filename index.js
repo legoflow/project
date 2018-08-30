@@ -233,13 +233,16 @@ const newDefaultProject = async (data) => {
   const tsconfigJsonFile = path.resolve(__dirname, './project/tsconfig.json')
   const jsEslintFile = path.resolve(__dirname, './project/js_eslint.js')
   const tsEslintFile = path.resolve(__dirname, './project/ts_eslint.js')
+  const eslintIgnoreFile = path.resolve(__dirname, './project/eslintignore')
 
   fs.copySync(gitignoreFile, path.resolve(projectPath, './.gitignore'))
   fs.copySync(editorconfigFile, path.resolve(projectPath, './.editorconfig'))
 
   isTsConfigJson && fs.copySync(tsconfigJsonFile, path.resolve(projectPath, 'tsconfig.json'))
   isJsEslint && fs.copySync(jsEslintFile, path.resolve(projectPath, '.eslintrc.js'))
-  isTsEslint && fs.copySync(tsEslintFile, path.resolve(projectPath, '.eslintrc.js'))
+  isTsEslint && fs.copySync(tsEslintFile, path.resolve(eslintIgnoreFile, '.eslintrc.js'))
+
+  ;(isJsEslint || isTsEslint) && (fs.copySync(eslintIgnoreFile, path.resolve(projectPath, '.eslintignore')))
 
   if (isNeedNpminstall && shell.cd(projectPath)) {
     console.log('installing local node_modules')
