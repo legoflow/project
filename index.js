@@ -122,18 +122,9 @@ const newDefaultProject = async (data) => {
     isNeedCreateDefalutFolder = false
     isNeedNpminstall = from !== 'app'
 
-    legoflowJSON.ESLint = false
-
-    legoflowJSON.includeModules = [ './node_modules' ]
-
-    legoflowJSON.alias = {
-      '@': './src'
-    }
-
     legoflowJSON.mode = 'webpack'
 
     legoflowJSON.webpack = {
-      VueChunkStyle: false,
       'sass.globalResources': [
         './src/style/var.scss'
       ]
@@ -144,7 +135,6 @@ const newDefaultProject = async (data) => {
 
     legoflowJSON[ 'workflow.build' ] = { }
     legoflowJSON[ 'workflow.build' ][ 'cache' ] = 'hash'
-    legoflowJSON[ 'workflow.build' ][ 'bundle.limitResourcesSize' ] = 5
 
     packageJSON.dependencies = {
       'axios': '^0.18.0',

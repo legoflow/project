@@ -1,32 +1,9 @@
 <template>
   <div class="home">
-    <img src="@/img/logo.png" alt="logo">
+    <img src="@/img/logo.png" alt="logo"/>
     <h1>{{ title }}</h1>
   </div>
 </template>
-
-<style lang="scss" scoped>
-.home {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  margin: auto;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-}
-
-h1 {
-  margin-top: 20px;
-  width: 100%;
-  text-align: center;
-  color: $h1Color;
-}
-</style>
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
@@ -36,3 +13,26 @@ export default class Home extends Vue {
   title: string = 'Vue.ts From LegoFlow'
 }
 </script>
+
+<style lang="scss" scoped>
+.home {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: auto;
+}
+
+h1 {
+  width: 100%;
+  margin-top: 20px;
+  color: $h1Color;
+  text-align: center;
+}
+</style>

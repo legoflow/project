@@ -4,14 +4,14 @@
 @import "var";
 
 body {
-  font: 12px/1.5 "San Francisco", "Helvetica Neue", Helvetica, Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
   color: #333;
+  font: 12px/1.5 "San Francisco", "Helvetica Neue", Helvetica, Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
   a {
-    text-decoration: none;
     color: #333;
+    text-decoration: none;
     &:hover {
-      text-decoration: underline;
       color: #333;
+      text-decoration: underline;
     }
   }
   * {

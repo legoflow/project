@@ -4,14 +4,15 @@
 /* 设置基本html,body样式 */
 html,
 body {
-  margin: 0 auto;
   padding: 0;
+  margin: 0 auto;
 }
 
 /* 清除默认按钮表现形式 */
 button {
+          appearance: none;
+
   -webkit-appearance: none;
-  appearance: none;
 }
 
 /* 设置表格默认样式 */
@@ -93,8 +94,8 @@ time,
 mark,
 audio,
 video {
-  margin: 0;
   padding: 0;
+  margin: 0;
 }
 
 del {
