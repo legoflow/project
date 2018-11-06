@@ -95,9 +95,7 @@ const newDefaultProject = async (data) => {
     license: 'UNLICENSED',
     scripts: {
       'dev': 'lf dev',
-      'build': 'lf build',
-      'eslint': 'lf:eslint --ext .ts,.js,.vue ./src/*',
-      'eslint:fix': 'lf:eslint --fix --ext .ts,.js,.vue ./src/*'
+      'build': 'lf build'
     }
   }
 
@@ -105,12 +103,10 @@ const newDefaultProject = async (data) => {
   let legoflowJSON = {
     name,
     version: cVersion,
-    type,
-    REM: false,
-    'ES.Next': isESNext || true,
-    ESLint: false,
-    alias: { }
+    type
   }
+
+  typeof isESNext !== 'undefined' && (legoflowJSON['ES.Next'] = isESNext)
 
   let isNeedNpminstall = false
   let isNeedCreateDefalutFolder = true
@@ -130,11 +126,8 @@ const newDefaultProject = async (data) => {
       ]
     }
 
-    legoflowJSON[ 'workflow.dev' ] = { }
-    legoflowJSON[ 'workflow.dev' ][ 'hot.reload' ] = true
-
-    legoflowJSON[ 'workflow.build' ] = { }
-    legoflowJSON[ 'workflow.build' ][ 'cache' ] = 'hash'
+    legoflowJSON[ 'workflow.dev' ] = {}
+    legoflowJSON[ 'workflow.build' ] = {}
 
     packageJSON.dependencies = {
       'axios': '^0.18.0',
@@ -149,13 +142,13 @@ const newDefaultProject = async (data) => {
   switch (type) {
     case 'Mobile': {
       legoflowJSON.REM = true
-      legoflowJSON.alias = { }
-      legoflowJSON.global = { }
+      legoflowJSON.alias = {}
+      legoflowJSON.global = {}
       break
     }
     case 'PC': {
-      legoflowJSON.alias = { }
-      legoflowJSON.global = { }
+      legoflowJSON.alias = {}
+      legoflowJSON.global = {}
       break
     }
     case 'Vue.js': {
