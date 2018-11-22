@@ -223,7 +223,7 @@ const newDefaultProject = async (data) => {
 
   isTsConfigJson && fs.copySync(tsconfigJsonFile, path.resolve(projectPath, 'tsconfig.json'))
   isJsEslint && fs.copySync(jsEslintFile, path.resolve(projectPath, '.eslintrc.js'))
-  isTsEslint && fs.copySync(tsEslintFile, path.resolve(eslintIgnoreFile, '.eslintrc.js'))
+  isTsEslint && fs.copySync(tsEslintFile, path.resolve(projectPath, '.eslintrc.js'))
 
   ;(isJsEslint || isTsEslint) && (fs.copySync(eslintIgnoreFile, path.resolve(projectPath, '.eslintignore')))
 
