@@ -208,7 +208,7 @@ const newGitProject = async data => {
   data.type = `git+${gitSourcePath}`
 
   if (path.extname(gitSourcePath) !== '.git') {
-    console.error('Git Repo Error')
+    console.error(chalk.red('Git Repo Error'))
 
     process.exit(1)
   }
@@ -223,7 +223,7 @@ const newGitProject = async data => {
     spinner.stop()
 
     if (error) {
-      console.error('下载 Git 模板错误', error)
+      console.error(chalk.red('下载 Git 模板错误'), error)
 
       del.sync(tmp, { force: true })
 
