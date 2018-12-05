@@ -5,11 +5,12 @@ const globby = require('globby')
 const glob = require('glob')
 const path = require('path')
 const fs = require('fs-extra')
-const axios = require('axios')
-const legoflowConfig = require('legoflow-config')
 const YAML = require('yamljs')
 const shell = require('shelljs')
 const formatYamlFile = require('format-yaml')
+const gitDownload = require('download-git-repo')
+const del = require('del')
+const ora = require('ora')
 
 const replaceInfo = ({ name, version, c_version: cVersion, author, isESNext, type }, str) => {
   return str
@@ -27,8 +28,8 @@ const replaceInfo = ({ name, version, c_version: cVersion, author, isESNext, typ
     .replace(/\[ESNext\]/g, isESNext)
 }
 
-// 获取默认项目类型模板
-const getDefalutProjectType = () => {
+// 获取项目模板
+const getProjectType = () => {
   const { project } = JSON.parse(fs.readFileSync(path.resolve(__dirname, './package.json'), 'utf8'))
 
   for (let k in project) {
@@ -38,49 +39,13 @@ const getDefalutProjectType = () => {
   return project
 }
 
-// 获取本地自定义项目模板
-const getCustomProjectType = () => {
-  const customProjectPath = legoflowConfig.get('customProjectPath') || ''
-
-  let customProject = { }
-
-  if (customProjectPath && fs.existsSync(customProjectPath)) {
-    const customProjectFolder = fs.readdirSync(customProjectPath).filter((n) => fs.statSync(path.resolve(customProjectPath, n)).isDirectory())
-
-    customProjectFolder.forEach((item) => {
-      customProject[ item ] = path.resolve(customProjectPath, item)
-    })
-  }
-
-  return customProject
-}
-
-// 获取项目模板
-const getProjectType = async () => {
-  const projectTypes = Object.assign(getDefalutProjectType(), getCustomProjectType())
-
-  if (!legoflowConfig.get('loadNPMLegoFlowTemplate')) {
-    return projectTypes
-  }
-
-  const { data } = await axios('https://npm.taobao.org/browse/keyword/legoflow-template-?type=json')
-
-  if (data && data.packages) {
-    data.packages.forEach((item) => {
-      projectTypes[ item.name ] = `@npm@`
-    })
-  }
-
-  return projectTypes
-}
-
 exports.getProjectType = getProjectType
 
 // 新建默认类型项目
-const newDefaultProject = async (data) => {
+const newDefaultProject = async data => {
   let { name, type, path: projectPath, version, isESNext, isSourcePath, author, c_version: cVersion, description = '', isESLint, from } = data
 
-  const types = getDefalutProjectType()
+  const types = getProjectType()
 
   const projectTypePath = types[ type ]
 
@@ -237,99 +202,57 @@ const newDefaultProject = async (data) => {
 }
 
 // 新建自定义路径模板
-const newCustomProject = async (data) => {
-  let { type, path: projectPath } = data
+const newGitProject = async data => {
+  let { name, path: projectPath, gitSourcePath, isSourcePath } = data
 
-  const types = getCustomProjectType()
+  data.type = `git+${gitSourcePath}`
 
-  const projectTypePath = types[ type ]
+  if (path.extname(gitSourcePath) !== '.git') {
+    console.error('Git Repo Error')
 
-  const yamlConfigPath = path.resolve(projectTypePath, 'legoflow.yml')
-  const packageJsonPath = path.resolve(projectTypePath, 'package.json')
-
-  if (!fs.existsSync(yamlConfigPath)) {
-    return '该项目类型缺少配置模板文件'
+    process.exit(1)
   }
 
-  if (!fs.existsSync(packageJsonPath)) {
-    return '该项目类型缺少模板 package.json'
-  }
+  const tmp = path.resolve(__dirname, `temp-${new Date().getTime()}`)
 
-  const yamlConfig = replaceInfo(data, fs.readFileSync(yamlConfigPath, 'utf8'))
-  const packageJson = replaceInfo(data, fs.readFileSync(packageJsonPath, 'utf8'))
+  fs.mkdirSync(tmp)
 
-  fs.ensureDirSync(projectPath)
+  const spinner = ora('downloading git repo').start()
 
-  fs.writeFileSync(path.resolve(projectPath, 'legoflow.yml'), yamlConfig)
-  fs.writeFileSync(path.resolve(projectPath, 'package.json'), packageJson)
+  await new Promise(resolve => gitDownload(`direct:${gitSourcePath}`, tmp, { clone: true }, function (error) {
+    spinner.stop()
 
-  // copy src folder
-  const srcPath = path.resolve(projectTypePath, 'src')
+    if (error) {
+      console.error('下载 Git 模板错误', error)
 
-  fs.existsSync(srcPath) && fs.copySync(srcPath, path.resolve(projectPath, 'src'))
+      del.sync(tmp, { force: true })
 
-  // copy shell folder
-  const shellPath = path.resolve(projectTypePath, 'shell')
-
-  fs.existsSync(shellPath) && fs.copySync(srcPath, path.resolve(shellPath, 'shell'))
-
-  const README = path.resolve(projectPath, 'README.md')
-
-  if (fs.existsSync(README)) {
-    fs.writeFileSync(README, replaceInfo(data, fs.readFileSync(README, 'utf8')))
-  }
-
-  return data
-}
-
-// 新建 npm 模板
-const newNpmProject = async (data) => {
-  let { name, type, path: projectPath, isSourcePath } = data
+      process.exit(1)
+    } else {
+      resolve()
+    }
+  }))
 
   fs.mkdirsSync(projectPath)
 
   shell.cd(projectPath)
 
-  const packageJsonPath = path.resolve(projectPath, 'package.json')
-
-  fs.writeFileSync(packageJsonPath, `{"name":"${name}"}`)
-
-  if (shell.exec(`npm i ${type} --save-dev`).code !== 0) {
-    return 'install NPM template error'
-  }
-
-  console.log('➜ install template success')
-
-  // 重写配置
-  const templatePath = path.resolve(projectPath, `./node_modules/${type}/template`)
+  const templatePath = path.resolve(tmp, 'template')
 
   const yamlConfig = replaceInfo(data, fs.readFileSync(path.resolve(templatePath, 'legoflow.yml'), 'utf8'))
-  let packageJson = replaceInfo(data, fs.readFileSync(path.resolve(templatePath, 'package.json'), 'utf8'))
+  const packageJson = replaceInfo(data, fs.readFileSync(path.resolve(templatePath, 'package.json'), 'utf8'))
 
   fs.writeFileSync(path.resolve(projectPath, 'legoflow.yml'), yamlConfig)
+  fs.writeFileSync(path.resolve(projectPath, 'package.json'), packageJson)
 
-  try {
-    packageJson = JSON.parse(packageJson)
+  console.log(`➜ rewrite ${chalk.yellow('package.json')} & ${chalk.yellow('legoflow.yml')} success`)
 
-    packageJson.devDependencies = Object.assign((JSON.parse(fs.readFileSync(packageJsonPath))).devDependencies, packageJson.devDependencies || { })
-  } catch (error) {
-    global.print && global.print.error(error)
-  }
-
-  fs.writeFileSync(path.resolve(projectPath, 'package.json'), JSON.stringify(packageJson, null, 2))
-
-  console.log('➜ rewrite package.json & legoflow.yml success')
-
-  const otherFiles = await globby([ `${templatePath}/**/*`, `!${templatePath}/package.json`, `!${templatePath}/legoflow.yml` ])
+  const otherFiles = await globby([ `${templatePath}/**/*`, `${templatePath}/**/.*`, `!${templatePath}/package.json`, `!${templatePath}/legoflow.yml` ])
 
   for (let f of otherFiles) {
     let distPath = path.resolve(projectPath, path.relative(templatePath, f))
 
     let basename = path.basename(f)
-
-    if (basename.indexOf('~~') === 0) {
-      distPath = distPath.replace(basename, `.${basename.substring(2)}`)
-    }
 
     fs.copySync(f, distPath)
   }
@@ -341,7 +264,7 @@ const newNpmProject = async (data) => {
     fs.writeFileSync(README, replaceInfo(data, fs.readFileSync(README, 'utf8')))
   }
 
-  console.log('➜ copy other files success')
+  console.log(`➜ copy ${chalk.yellow('remaining files')} success`)
 
   if (shell.exec(`npm i`).code !== 0) {
     return 'install dependencies error'
@@ -351,12 +274,14 @@ const newNpmProject = async (data) => {
 
   data.newProjectSuccessMessage = `➜ You can${!isSourcePath ? `${chalk.blue.bold(` **cd ${name}**`)} and` : ''} run ${chalk.blue.bold('**lf dev**')} to start workflow.dev`
 
+  del.sync(tmp, { force: true })
+
   return data
 }
 
 // 新建项目
 exports.new = async (data) => {
-  let { name, path: projectPath, isSourcePath, type, typeSourcePath } = data
+  let { name, path: projectPath, isSourcePath, type, typeSourcePath, gitSourcePath } = data
 
   if (!isSourcePath) {
     data.path = projectPath = path.resolve(projectPath, `./${name}`)
@@ -370,13 +295,10 @@ exports.new = async (data) => {
     return '路径存在其他文件'
   }
 
-  if (typeSourcePath === '@npm@') {
+  if (gitSourcePath) {
     /* eslint-disable no-return-await */
-    return await newNpmProject(data)
-  } else if (getCustomProjectType()[ type ]) {
-    /* eslint-disable no-return-await */
-    return await newCustomProject(data)
-  } else if (getDefalutProjectType()[ type ]) {
+    return await newGitProject(data)
+  } else if (getProjectType()[ type ]) {
     /* eslint-disable no-return-await */
     return await newDefaultProject(data)
   } else {
