@@ -6,18 +6,19 @@
 *,
 *:before,
 *:after {
-  font-family: "San Francisco", "Helvetica Neue", Helvetica, sans-serif;
-  font-weight: 300;
   box-sizing: border-box;
+  font-family: "San Francisco", "Helvetica Neue", "Helvetica", "sans-serif";
+  font-weight: 300;
   appearance: none;
+
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
 /* 设置基本html,body样式 */
 html,
 body {
-  margin: 0 auto;
   padding: 0;
+  margin: 0 auto;
 }
 
 /* 设置图片最大宽度 */
@@ -27,8 +28,9 @@ img {
 
 /* 清除默认按钮表现形式 */
 button {
+          appearance: none;
+
   -webkit-appearance: none;
-  appearance: none;
 }
 
 /* 设置表格默认样式 */
@@ -43,8 +45,8 @@ textarea {
 }
 
 a {
-  text-decoration: none;
   color: currentColor;
+  text-decoration: none;
 }
 
 img {
@@ -115,8 +117,8 @@ time,
 mark,
 audio,
 video {
-  margin: 0;
   padding: 0;
+  margin: 0;
 }
 
 del {
